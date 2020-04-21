@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Exceptions\ApiException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 

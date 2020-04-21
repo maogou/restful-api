@@ -15,7 +15,7 @@ class ApiController extends Controller
      * @param int $code
      * @throws ApiException
      */
-    protected function apiAbort($message='',$code = 500){
+    protected function apiAbort($message='server error',$code = 500){
         throw new ApiException($message,$code);
     }
 }
