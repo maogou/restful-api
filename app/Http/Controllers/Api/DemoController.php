@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\User;
+use App\Exceptions\ApiException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class DemoController extends Controller
+class DemoController extends ApiController
 {
 
     public function login(Request $request){
@@ -23,6 +22,8 @@ class DemoController extends Controller
     }
 
     public function me(){
+
+        $this->apiAbort('那是一个秋天',30000);
         return response()->json(['user'=>Auth::user()]);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Support\Str;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -50,6 +51,40 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
-        return parent::render($request, $exception);
+        if ($exception instanceof  ApiException) {
+            $data['message'] = $exception->getMessage();
+            $code = $exception->getCode();
+
+            return $this->transferJson($data,$code);
+        }
+
+        $uri = ltrim($request->getRequestUri(),'/');
+
+        $response = parent::render($request, $exception);
+
+        if (Str::startsWith(strtolower($uri),'api')) {
+            $content = json_decode($response->getContent(),true);
+            $code = $response->getStatusCode();
+
+            return $this->transferJson($content,$code);
+        }
+
+        return $response;
+
+    }
+
+    /**
+     * 针对api请求的把异常转换为json格式返回
+     *
+     * @param $data
+     * @param int $code
+     * @return \Illuminate\Http\JsonResponse
+     */
+    protected function transferJson($data,$code = 500) {
+
+        return response()->json([
+            'data'=>$data,
+            'code'=>empty($code) ? 500 : $code
+        ]);
     }
 }
