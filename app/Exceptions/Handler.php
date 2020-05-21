@@ -83,8 +83,23 @@ class Handler extends ExceptionHandler
     protected function transferJson($data,$code = 500) {
 
         return response()->json([
-            'data'=>$data,
+            'data'=>empty(array_filter($data)) ? $this->codeMap($code) : $data,
             'code'=>empty($code) ? 500 : $code
         ]);
+    }
+
+    /**
+     * 返回为未能捕获的code码对应的错误信息
+     * @param int $code
+     * @return mixed
+     */
+    protected function codeMap($code = 500) {
+
+        $maps = [
+            '404'=>'Request route path not exists',
+            '500'=>'Server internal error'
+        ];
+
+       return isset($maps[$code]) ? $maps[$code] : $maps[500];
     }
 }

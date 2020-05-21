@@ -12,12 +12,19 @@ class DemoController extends ApiController
 
         $params = $request->only(['email','password']);
 
-        Auth::attempt($params);
+        if (! Auth::attempt($params)) {
+            return $this->setDataCode(401)->respondWithSuccess('用户名或密码错误');
+        }
 
 
         $token = Auth::user()->createToken('my-app-token')->plainTextToken;
 
-        return response()->json(['token'=>$token]);
+
+        return $this->respondWithSuccess([
+            'token'=>$token,
+            'user'=>Auth::user()
+            ]
+        );
     }
 
     public function me(){
